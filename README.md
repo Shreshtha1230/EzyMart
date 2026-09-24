@@ -1,0 +1,2 @@
+# EzyMart
+Online shopping platform
