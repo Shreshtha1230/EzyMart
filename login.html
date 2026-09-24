@@ -1,0 +1,347 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>EazyCart | Login</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="login.css">
+</head>
+
+<body>
+
+    <!-- BACK TO HOME -->
+    <a href="index.html" class="back-home">
+        <i class="fa-solid fa-arrow-left"></i>
+        Back to Home
+    </a>
+
+
+    <!-- LOGIN PAGE -->
+    <main class="auth-page">
+
+        <!-- LEFT SIDE -->
+        <section class="auth-showcase">
+
+            <div class="showcase-content">
+
+                <a href="index.html" class="auth-logo">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span>EazyCart</span>
+                </a>
+
+                <span class="showcase-label">WELCOME TO EAZYCART</span>
+
+                <h1>
+                    Shop smarter.
+                    <span>Live better.</span>
+                </h1>
+
+                <p>
+                    Discover amazing products, exclusive deals
+                    and a shopping experience designed just for you.
+                </p>
+
+                <div class="showcase-features">
+
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <i class="fa-solid fa-truck-fast"></i>
+                        </div>
+
+                        <div>
+                            <strong>Fast Delivery</strong>
+                            <span>Quick and reliable delivery</span>
+                        </div>
+                    </div>
+
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+
+                        <div>
+                            <strong>Secure Shopping</strong>
+                            <span>Your shopping experience matters</span>
+                        </div>
+                    </div>
+
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <i class="fa-solid fa-tags"></i>
+                        </div>
+
+                        <div>
+                            <strong>Best Deals</strong>
+                            <span>Great products at great prices</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- DECORATIVE 3D ORB -->
+            <div class="orb">
+                <div class="orb-ring ring-one"></div>
+                <div class="orb-ring ring-two"></div>
+                <div class="orb-core">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- RIGHT SIDE -->
+        <section class="auth-form-section">
+
+            <div class="auth-card">
+
+                <!-- LOGIN -->
+                <div id="loginBox">
+
+                    <div class="form-heading">
+                        <span>WELCOME BACK</span>
+                        <h2>Login to your account</h2>
+                        <p>Continue your shopping journey with EazyCart.</p>
+                    </div>
+
+
+                    <form onsubmit="loginUser(event)">
+
+                        <div class="input-group">
+                            <label>Email Address</label>
+
+                            <div class="input-box">
+                                <i class="fa-regular fa-envelope"></i>
+                                <input
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+
+                        <div class="input-group">
+                            <label>Password</label>
+
+                            <div class="input-box">
+                                <i class="fa-solid fa-lock"></i>
+
+                                <input
+                                    id="loginPassword"
+                                    type="password"
+                                    placeholder="Enter your password"
+                                    required
+                                >
+
+                                <button
+                                    type="button"
+                                    class="password-toggle"
+                                    onclick="togglePassword('loginPassword', this)"
+                                >
+                                    <i class="fa-regular fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+
+                        <div class="form-options">
+
+                            <label class="remember">
+                                <input type="checkbox">
+                                <span>Remember me</span>
+                            </label>
+
+                            <a href="#" onclick="forgotPassword(event)">
+                                Forgot password?
+                            </a>
+
+                        </div>
+
+
+                        <button class="auth-btn" type="submit">
+                            Login
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+
+                    </form>
+
+
+                    <div class="switch-form">
+                        Don't have an account?
+                        <button onclick="showSignup()">Create Account</button>
+                    </div>
+
+                </div>
+
+
+                <!-- SIGNUP -->
+                <div id="signupBox" class="hidden">
+
+                    <div class="form-heading">
+                        <span>GET STARTED</span>
+                        <h2>Create your account</h2>
+                        <p>Join EazyCart and start shopping smarter.</p>
+                    </div>
+
+
+                    <form onsubmit="signupUser(event)">
+
+                        <div class="input-group">
+                            <label>Full Name</label>
+
+                            <div class="input-box">
+                                <i class="fa-regular fa-user"></i>
+
+                                <input
+                                    type="text"
+                                    placeholder="Enter your full name"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+
+                        <div class="input-group">
+                            <label>Email Address</label>
+
+                            <div class="input-box">
+                                <i class="fa-regular fa-envelope"></i>
+
+                                <input
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+
+                        <div class="input-group">
+                            <label>Password</label>
+
+                            <div class="input-box">
+                                <i class="fa-solid fa-lock"></i>
+
+                                <input
+                                    id="signupPassword"
+                                    type="password"
+                                    placeholder="Create a password"
+                                    required
+                                >
+
+                                <button
+                                    type="button"
+                                    class="password-toggle"
+                                    onclick="togglePassword('signupPassword', this)"
+                                >
+                                    <i class="fa-regular fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+
+                        <label class="terms">
+                            <input type="checkbox" required>
+                            <span>
+                                I agree to the Terms & Conditions
+                            </span>
+                        </label>
+
+
+                        <button class="auth-btn" type="submit">
+                            Create Account
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+
+                    </form>
+
+
+                    <div class="switch-form">
+                        Already have an account?
+                        <button onclick="showLogin()">Login</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+
+        function showSignup() {
+            document.getElementById("loginBox").classList.add("hidden");
+            document.getElementById("signupBox").classList.remove("hidden");
+        }
+
+
+        function showLogin() {
+            document.getElementById("signupBox").classList.add("hidden");
+            document.getElementById("loginBox").classList.remove("hidden");
+        }
+
+
+        function togglePassword(inputId, button) {
+
+            const input = document.getElementById(inputId);
+            const icon = button.querySelector("i");
+
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+
+
+        function loginUser(event) {
+
+            event.preventDefault();
+
+            alert("Login successful! 🎉");
+
+        }
+
+
+        function signupUser(event) {
+
+            event.preventDefault();
+
+            alert("Account created successfully! 🎉");
+
+        }
+
+
+        function forgotPassword(event) {
+
+            event.preventDefault();
+
+            alert("Password reset option will be connected later.");
+
+        }
+
+    </script>
+
+</body>
+</html>
+

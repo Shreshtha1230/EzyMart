@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>EazyMart | Products</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link rel="stylesheet" href="product.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+
+    <nav class="navbar">
+
+        <a href="index.html" class="logo">
+
+            <div class="logo-icon">
+                <i class="fa-solid fa-bag-shopping"></i>
+            </div>
+
+            EZY<span>MART</span>
+
+        </a>
+
+        <div class="nav-links">
+
+            <a href="index.html">Home</a>
+
+            <a href="categories.html">Categories</a>
+
+            <a href="products.html" class="active">
+                Products
+            </a>
+
+            <a href="wishlist.html">
+                Wishlist
+            </a>
+
+            <a href="index.html#offers">
+                Offers
+            </a>
+
+            <a href="index.html#contact">
+                Contact
+            </a>
+
+        </div>
+
+        <div class="nav-actions">
+
+            <a href="index.html" class="icon-btn">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </a>
+
+            <a href="login.html" class="icon-btn">
+                <i class="fa-regular fa-user"></i>
+            </a>
+
+            <a href="cart.html" class="cart-nav">
+
+                <i class="fa-solid fa-cart-shopping"></i>
+
+                <span>Cart</span>
+
+                <b>2</b>
+
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- ================= PAGE HERO ================= -->
+
+    <section class="products-hero">
+
+        <div>
+
+            <span class="hero-label">
+                EAZYMART COLLECTION
+            </span>
+
+            <h1>
+                Explore Our
+                <span>Products</span>
+            </h1>
+
+            <p>
+                Discover premium products selected for
+                your everyday lifestyle.
+            </p>
+
+        </div>
+
+        <div class="hero-icon">
+
+            <i class="fa-solid fa-store"></i>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= PRODUCTS AREA ================= -->
+
+    <section class="products-section">
+
+        <!-- FILTER SIDEBAR -->
+
+        <aside class="filter-sidebar">
+
+            <div class="filter-title">
+
+                <h3>
+                    <i class="fa-solid fa-sliders"></i>
+                    Filters
+                </h3>
+
+                <button id="clearFilters">
+                    Clear All
+                </button>
+
+            </div>
+
+
+            <!-- CATEGORY -->
+
+            <div class="filter-group">
+
+                <h4>Category</h4>
+
+                <label>
+                    <input
+                        type="radio"
+                        name="category"
+                        value="all"
+                        checked
+                    >
+                    <span>All Products</span>
+                </label>
+
+                <label>
+                    <input
+                        type="radio"
+                        name="category"
+                        value="Fashion"
+                    >
+                    <span>Fashion</span>
+                </label>
+
+                <label>
+                    <input
+                        type="radio"
+                        name="category"
+                        value="Electronics"
+                    >
+                    <span>Electronics</span>
+                </label>
+
+                <label>
+                    <input
+                        type="radio"
+                        name="category"
+                        value="Footwear"
+                    >
+                    <span>Footwear</span>
+                </label>
+
+                <label>
+                    <input
+                        type="radio"
+                        name="category"
+                        value="Accessories"
+                    >
+                    <span>Accessories</span>
+                </label>
+
+                <label>
+                    <input
+                        type="radio"
+                        name="category"
+                        value="Bags"
+                    >
+                    <span>Bags</span>
+                </label>
+
+            </div>
+
+
+            <!-- PRICE -->
+
+            <div class="filter-group">
+
+                <h4>Maximum Price</h4>
+
+                <div class="price-value">
+                    ₹<span id="priceValue">5000</span>
+                </div>
+
+                <input
+                    type="range"
+                    id="priceRange"
+                    min="500"
+                    max="5000"
+                    value="5000"
+                    step="100"
+                >
+
+                <div class="price-range-labels">
+                    <span>₹500</span>
+                    <span>₹5000+</span>
+                </div>
+
+            </div>
+
+
+            <!-- RATING -->
+
+            <div class="filter-group">
+
+                <h4>Rating</h4>
+
+                <label>
+                    <input
+                        type="radio"
+                        name="rating"
+                        value="0"
+                        checked
+                    >
+                    <span>All Ratings</span>
+                </label>
+
+                <label>
+                    <input
+                        type="radio"
+                        name="rating"
+                        value="4"
+                    >
+                    <span class="stars">
+                        ★★★★☆ &nbsp; 4+ Stars
+                    </span>
+                </label>
+
+                <label>
+                    <input
+                        type="radio"
+                        name="rating"
+                        value="4.5"
+                    >
+                    <span class="stars">
+                        ★★★★★ &nbsp; 4.5+ Stars
+                    </span>
+                </label>
+
+            </div>
+
+
+            <!-- AVAILABILITY -->
+
+            <div class="filter-group">
+
+                <h4>Availability</h4>
+
+                <label class="check-label">
+
+                    <input
+                        type="checkbox"
+                        id="inStock"
+                    >
+
+                    <span>
+                        In Stock Only
+                    </span>
+
+                </label>
+
+            </div>
+
+        </aside>
+
+
+        <!-- PRODUCTS CONTENT -->
+
+        <div class="products-content">
+
+            <div class="products-toolbar">
+
+                <div>
+
+                    <span class="result-text">
+                        Showing
+                    </span>
+
+                    <strong id="resultCount">
+                        8
+                    </strong>
+
+                    <span class="result-text">
+                        products
+                    </span>
+
+                </div>
+
+
+                <div class="toolbar-right">
+
+                    <div class="product-search">
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+                        <input
+                            type="text"
+                            id="productSearch"
+                            placeholder="Search products..."
+                        >
+
+                    </div>
+
+
+                    <select id="sortProducts">
+
+                        <option value="default">
+                            Sort: Featured
+                        </option>
+
+                        <option value="low">
+                            Price: Low to High
+                        </option>
+
+                        <option value="high">
+                            Price: High to Low
+                        </option>
+
+                        <option value="rating">
+                            Highest Rated
+                        </option>
+
+                        <option value="name">
+                            Name: A-Z
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <!-- PRODUCT GRID -->
+
+            <div
+                class="products-grid"
+                id="productsGrid"
+            ></div>
+
+
+            <!-- NO RESULT -->
+
+            <div
+                class="no-products"
+                id="noProducts"
+            >
+
+                <div class="no-products-icon">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+
+                <h3>
+                    No Products Found
+                </h3>
+
+                <p>
+                    Try changing your filters or search.
+                </p>
+
+                <button id="resetProducts">
+                    Reset Filters
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <div class="footer-logo">
+
+            <div class="logo-icon">
+                <i class="fa-solid fa-bag-shopping"></i>
+            </div>
+
+            EZY<span>MART</span>
+
+        </div>
+
+        <p>
+            Shop smarter. Live better.
+        </p>
+
+        <div class="footer-links">
+
+            <a href="index.html">Home</a>
+            <a href="categories.html">Categories</a>
+            <a href="products.html">Products</a>
+            <a href="wishlist.html">Wishlist</a>
+            <a href="cart.html">Cart</a>
+
+        </div>
+
+        <div class="copyright">
+            © 2026 EazyMart. All Rights Reserved.
+        </div>
+
+    </footer>
+
+
+    <script src="product.js"></script>
+
+</body>
+
+</html>
