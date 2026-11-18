@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EzyMart Pro | Account & Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .auth-wrap {
+            padding: 130px 0 60px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 36px;
+            align-items: center;
+        }
+        .auth-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            padding: 6px;
+            border-radius: 14px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            margin-bottom: 22px;
+        }
+        .auth-tab {
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .auth-tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #fff;
+        }
+        .field-group { margin-bottom: 16px; }
+        .field-group label {
+            display: block;
+            font-size: 12.5px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+        }
+        @media (max-width: 860px) {
+            .auth-wrap { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar-root"></div>
+
+    <main class="container">
+        <div class="auth-wrap" id="authRoot"></div>
+    </main>
+
+    <div id="footer-root"></div>
+
+    <script src="app.js"></script>
+    <script>
+        renderSharedLayout("login");
+        let authMode = "login";
+
+        function renderAuth() {
+            const user = getUser();
+            const root = document.getElementById("authRoot");
+
+            if (user) {
+                const orders = getOrders();
+                root.innerHTML = `
+                    <div class="glass-card" style="grid-column:1/-1;max-width:640px;margin:0 auto;padding:36px;text-align:center;">
+                        <div style="width:76px;height:76px;border-radius:50%;margin:0 auto 16px;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;font-size:32px;color:#fff;font-weight:900;">
+                            ${user.name.charAt(0).toUpperCase()}
+                        </div>
+                        <span class="section-tag">VERIFIED MEMBER</span>
+                        <h1 style="font-size:30px;font-weight:900;margin-bottom:4px;">${user.name}</h1>
+                        <p style="color:var(--text-muted);margin-bottom:24px;">${user.email}</p>
+                        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:26px;">
+                            <div class="stat-box"><strong>${orders.length}</strong><span>Orders</span></div>
+                            <div class="stat-box"><strong>${getWishlist().length}</strong><span>Wishlist</span></div>
+                            <div class="stat-box"><strong>${getCart().reduce((s,i)=>s+i.qty,0)}</strong><span>In Cart</span></div>
+                        </div>
+                        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+                            <a href="orders.html" class="btn btn-primary"><i class="fa-solid fa-box"></i> My Orders</a>
+                            <a href="product.html" class="btn btn-secondary"><i class="fa-solid fa-store"></i> Continue Shopping</a>
+                            <button class="btn btn-danger" onclick="logoutUser()"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            root.innerHTML = `
+                <div>
+                    <span class="section-tag"><i class="fa-solid fa-sparkles"></i> EZYMART ACCOUNT</span>
+                    <h1 style="font-size:clamp(34px,5vw,54px);font-weight:900;line-height:1.08;margin-bottom:16px;">
+                        Shop Smarter.<br><span style="background:linear-gradient(90deg,var(--primary-light),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Checkout Faster.</span>
+                    </h1>
+                    <p style="color:var(--text-muted);margin-bottom:28px;max-width:460px;">
+                        Sign in to sync your cart, unlock student promo codes, track orders live, and download GST invoices anytime.
+                    </p>
+                    <div style="display:flex;flex-direction:column;gap:14px;max-width:420px;">
+                        <div class="glass-card" style="padding:14px 18px;display:flex;align-items:center;gap:14px;border-radius:16px;">
+                            <i class="fa-solid fa-bolt" style="color:var(--primary-light);font-size:20px;"></i>
+                            <div><strong>One-Click EzyPay</strong><div style="font-size:12.5px;color:var(--text-muted);">Auto-fills your name & email at checkout</div></div>
+                        </div>
+                        <div class="glass-card" style="padding:14px 18px;display:flex;align-items:center;gap:14px;border-radius:16px;">
+                            <i class="fa-solid fa-shield-halved" style="color:var(--success);font-size:20px;"></i>
+                            <div><strong>Order History & Tracking</strong><div style="font-size:12.5px;color:var(--text-muted);">View live delivery progress & invoices</div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="padding:32px;">
+                    <div class="auth-tabs">
+                        <button class="auth-tab ${authMode === 'login' ? 'active' : ''}" onclick="switchAuth('login')">Sign In</button>
+                        <button class="auth-tab ${authMode === 'signup' ? 'active' : ''}" onclick="switchAuth('signup')">Create Account</button>
+                    </div>
+
+                    <form onsubmit="submitAuth(event)">
+                        ${authMode === 'signup' ? `
+                            <div class="field-group">
+                                <label>Full Name</label>
+                                <input id="authName" type="text" class="input-field" placeholder="e.g. Aarav Sharma">
+                            </div>
+                        ` : ""}
+                        <div class="field-group">
+                            <label>Email Address</label>
+                            <input id="authEmail" type="text" class="input-field" placeholder="you@example.com">
+                        </div>
+                        <div class="field-group">
+                            <label>Password (min 6 characters)</label>
+                            <input id="authPassword" type="password" class="input-field" placeholder="••••••••">
+                        </div>
+                        <div id="authError" class="form-error" style="margin-bottom:12px;"></div>
+                        <button type="submit" class="btn btn-primary" style="width:100%;padding:13px;">
+                            <i class="fa-solid ${authMode === 'login' ? 'fa-right-to-bracket' : 'fa-user-plus'}"></i>
+                            ${authMode === 'login' ? 'Sign In to EzyMart' : 'Create Free Account'}
+                        </button>
+                    </form>
+
+                    <div style="margin-top:18px;padding-top:18px;border-top:1px solid var(--border);text-align:center;">
+                        <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">Presenting in viva? Use 1-click demo login:</div>
+                        <button class="btn btn-secondary btn-sm" style="width:100%;" onclick="demoLogin()">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Quick Demo Login (Aarav Sharma)
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function switchAuth(mode) {
+            authMode = mode;
+            renderAuth();
+        }
+
+        function submitAuth(e) {
+            e.preventDefault();
+            const errEl = document.getElementById("authError");
+            const email = document.getElementById("authEmail").value.trim();
+            const pass = document.getElementById("authPassword").value;
+            const nameInput = document.getElementById("authName");
+            const name = nameInput ? nameInput.value.trim() : "";
+
+            errEl.classList.remove("show");
+
+            if (authMode === "signup" && name.length < 2) {
+                errEl.textContent = "Please enter your full name (at least 2 characters).";
+                errEl.classList.add("show");
+                return;
+            }
+            if (!isValidEmailSimple(email)) {
+                errEl.textContent = "Please enter a valid email address (must contain @ and domain).";
+                errEl.classList.add("show");
+                return;
+            }
+            if (pass.length < 6) {
+                errEl.textContent = "Password must be at least 6 characters long.";
+                errEl.classList.add("show");
+                return;
+            }
+
+            const finalName = authMode === "signup" ? name : email.split("@")[0];
+            setUser({ name: finalName, email: email });
+            showToast(`Welcome, ${finalName}!`, "success");
+            renderSharedLayout("login");
+            renderAuth();
+        }
+
+        function demoLogin() {
+            setUser({ name: "Aarav Sharma", email: "aarav.sharma@ezymart.in" });
+            showToast("Logged in with Demo Account!", "success");
+            renderSharedLayout("login");
+            renderAuth();
+        }
+
+        function logoutUser() {
+            setUser(null);
+            showToast("Signed out successfully.", "info");
+            renderSharedLayout("login");
+            renderAuth();
+        }
+
+        renderAuth();
+    </script>
+</body>
+</html>

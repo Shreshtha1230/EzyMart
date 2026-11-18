@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EzyMart Pro | Shopping Cart</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .cart-grid {
+            display: grid;
+            grid-template-columns: 1.45fr 0.85fr;
+            gap: 28px;
+            align-items: start;
+        }
+        .cart-item {
+            display: grid;
+            grid-template-columns: 110px 1fr auto;
+            gap: 18px;
+            padding: 18px;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+        .cart-thumb {
+            width: 110px;
+            height: 110px;
+            border-radius: 16px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1d1546, #5c3eff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cart-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .qty-control {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 10px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--glass);
+        }
+        .qty-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            border: none;
+            background: var(--surface-hover);
+            color: var(--text);
+            font-weight: 800;
+            cursor: pointer;
+        }
+        .qty-btn:hover { background: var(--primary); color: #fff; }
+        .summary-card {
+            padding: 26px;
+            position: sticky;
+            top: 102px;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        .summary-row.total {
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--text);
+        }
+        .shipping-bar-wrap {
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            border-radius: 16px;
+        }
+        .progress-track {
+            height: 8px;
+            border-radius: 999px;
+            background: var(--glass);
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            transition: width 0.35s ease;
+        }
+        @media (max-width: 920px) {
+            .cart-grid { grid-template-columns: 1fr; }
+            .cart-item { grid-template-columns: 84px 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar-root"></div>
+
+    <section class="page-hero">
+        <div class="container">
+            <span class="section-tag"><i class="fa-solid fa-bag-shopping"></i> REVIEW YOUR BAG</span>
+            <h1>Shopping <span>Cart</span></h1>
+            <p>Apply promo codes, adjust quantities, and head to our EzyPay Checkout in one click.</p>
+        </div>
+    </section>
+
+    <main class="container">
+        <div id="cartContent"></div>
+    </main>
+
+    <div id="footer-root"></div>
+
+    <script src="app.js"></script>
+    <script>
+        renderSharedLayout("cart");
+
+        const FREE_SHIP_THRESHOLD = 1499;
+
+        function getAppliedPromo() {
+            return localStorage.getItem("ezymart_promo") || "";
+        }
+
+        function setAppliedPromo(code) {
+            if (code) localStorage.setItem("ezymart_promo", code);
+            else localStorage.removeItem("ezymart_promo");
+        }
+
+        function renderCartPage() {
+            const cart = getCart();
+            const root = document.getElementById("cartContent");
+
+            if (cart.length === 0) {
+                root.innerHTML = `
+                    <div class="glass-card" style="text-align:center;padding:64px 24px;max-width:600px;margin:0 auto;">
+                        <i class="fa-solid fa-cart-shopping" style="font-size:50px;color:var(--primary-light);margin-bottom:16px;"></i>
+                        <h2 style="font-size:24px;font-weight:900;margin-bottom:8px;">Your Cart is Empty</h2>
+                        <p style="color:var(--text-muted);margin-bottom:22px;">Looks like you haven't added any items yet. Explore our latest drops!</p>
+                        <a href="product.html" class="btn btn-primary"><i class="fa-solid fa-bolt"></i> Start Shopping</a>
+                    </div>
+                `;
+                return;
+            }
+
+            let subtotal = 0;
+            const itemsHtml = cart.map((item, idx) => {
+                const p = getProductById(item.id);
+                if (!p) return "";
+                const lineTotal = p.price * item.qty;
+                subtotal += lineTotal;
+                return `
+                    <div class="glass-card cart-item">
+                        <div class="cart-thumb">
+                            <img src="${p.img}" alt="${p.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <i class="fa-solid ${p.icon} product-fallback-icon" style="font-size:32px;"></i>
+                        </div>
+                        <div>
+                            <div style="font-size:11.5px;font-weight:700;color:var(--primary-light);text-transform:uppercase;">${p.category}</div>
+                            <h3 style="font-size:17px;font-weight:800;margin:2px 0 4px;">${p.name}</h3>
+                            <div style="font-size:12.5px;color:var(--text-muted);margin-bottom:10px;">Option: <strong>${item.variant}</strong> • Unit: ${formatINR(p.price)}</div>
+                            <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+                                <div class="qty-control">
+                                    <button class="qty-btn" onclick="changeQty(${idx}, -1)">-</button>
+                                    <strong style="min-width:20px;text-align:center;">${item.qty}</strong>
+                                    <button class="qty-btn" onclick="changeQty(${idx}, 1)">+</button>
+                                </div>
+                                <button class="btn btn-danger btn-sm" onclick="removeCartItem(${idx})">
+                                    <i class="fa-regular fa-trash-can"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:20px;font-weight:900;">${formatINR(lineTotal)}</div>
+                            <div style="font-size:12px;color:var(--success);font-weight:600;">In Stock</div>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+
+            // Promo calculation
+            const promoCode = getAppliedPromo();
+            let discount = 0;
+            let promoNote = "";
+            if (promoCode && PROMO_CODES[promoCode]) {
+                const rule = PROMO_CODES[promoCode];
+                if (rule.type === "percent") {
+                    discount = Math.round((subtotal * rule.value) / 100);
+                    promoNote = `${promoCode} (${rule.label})`;
+                } else if (rule.type === "flat") {
+                    if (subtotal >= (rule.minSubtotal || 0)) {
+                        discount = rule.value;
+                        promoNote = `${promoCode} (${rule.label})`;
+                    } else {
+                        setAppliedPromo("");
+                    }
+                }
+            }
+
+            const afterDiscount = Math.max(0, subtotal - discount);
+            const shipping = afterDiscount >= FREE_SHIP_THRESHOLD ? 0 : 99;
+            const gst = Math.round(afterDiscount * 0.18);
+            const grandTotal = afterDiscount + shipping + gst;
+
+            const remainingForFree = Math.max(0, FREE_SHIP_THRESHOLD - afterDiscount);
+            const progressPct = Math.min(100, Math.round((afterDiscount / FREE_SHIP_THRESHOLD) * 100));
+
+            root.innerHTML = `
+                <div class="cart-grid">
+                    <div>
+                        <div class="glass-card shipping-bar-wrap">
+                            <div style="display:flex;align-items:center;justify-content:space-between;font-size:13.5px;font-weight:700;">
+                                ${remainingForFree === 0
+                                    ? `<span style="color:var(--success);"><i class="fa-solid fa-circle-check"></i> Unlocked FREE Express Shipping!</span>`
+                                    : `<span><i class="fa-solid fa-truck-fast" style="color:var(--primary-light);"></i> Add <strong>${formatINR(remainingForFree)}</strong> more for FREE Delivery</span>`
+                                }
+                                <span>${progressPct}%</span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill" style="width:${progressPct}%;"></div>
+                            </div>
+                        </div>
+                        ${itemsHtml}
+                        <div style="display:flex;justify-content:space-between;margin-top:10px;flex-wrap:wrap;gap:10px;">
+                            <a href="product.html" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Continue Shopping</a>
+                            <button class="btn btn-danger btn-sm" onclick="clearCart()"><i class="fa-solid fa-trash"></i> Clear Cart</button>
+                        </div>
+                    </div>
+
+                    <aside class="glass-card summary-card">
+                        <h2 style="font-size:21px;font-weight:900;margin-bottom:18px;">Order Summary</h2>
+
+                        <div style="display:flex;gap:8px;margin-bottom:10px;">
+                            <input id="promoInput" type="text" class="input-field" placeholder="Promo code (e.g. EZY20)" value="${promoCode}">
+                            <button class="btn btn-secondary btn-sm" onclick="applyPromo()">Apply</button>
+                        </div>
+                        <div style="font-size:11.5px;color:var(--text-muted);margin-bottom:18px;">
+                            Try: <strong style="color:var(--primary-light);cursor:pointer;" onclick="quickPromo('EZY20')">EZY20</strong> •
+                            <strong style="color:var(--primary-light);cursor:pointer;" onclick="quickPromo('FIRST500')">FIRST500</strong> •
+                            <strong style="color:var(--primary-light);cursor:pointer;" onclick="quickPromo('WELCOME10')">WELCOME10</strong>
+                        </div>
+
+                        <div class="summary-row"><span>Subtotal</span><strong style="color:var(--text);">${formatINR(subtotal)}</strong></div>
+                        ${discount > 0 ? `
+                            <div class="summary-row" style="color:var(--success);">
+                                <span>Discount (${promoNote})</span>
+                                <strong>- ${formatINR(discount)}</strong>
+                            </div>
+                        ` : ""}
+                        <div class="summary-row">
+                            <span>Shipping</span>
+                            <strong style="color:${shipping === 0 ? 'var(--success)' : 'var(--text)'};">${shipping === 0 ? "FREE" : formatINR(shipping)}</strong>
+                        </div>
+                        <div class="summary-row"><span>Estimated GST (18%)</span><strong style="color:var(--text);">${formatINR(gst)}</strong></div>
+                        <div class="summary-row total"><span>Grand Total</span><span>${formatINR(grandTotal)}</span></div>
+
+                        <a href="checkout.html" class="btn btn-primary" style="width:100%;margin-top:18px;padding:14px;">
+                            <i class="fa-solid fa-lock"></i> Proceed to EzyPay Checkout
+                        </a>
+                        <div style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:12px;">
+                            <i class="fa-solid fa-shield-halved" style="color:var(--success);"></i> UPI, Card, NetBanking & COD Supported
+                        </div>
+                    </aside>
+                </div>
+            `;
+        }
+
+        function changeQty(idx, delta) {
+            const cart = getCart();
+            if (!cart[idx]) return;
+            cart[idx].qty += delta;
+            if (cart[idx].qty <= 0) cart.splice(idx, 1);
+            saveCart(cart);
+            renderCartPage();
+        }
+
+        function removeCartItem(idx) {
+            const cart = getCart();
+            cart.splice(idx, 1);
+            saveCart(cart);
+            showToast("Item removed from cart.", "info");
+            renderCartPage();
+        }
+
+        function clearCart() {
+            saveCart([]);
+            setAppliedPromo("");
+            renderCartPage();
+            showToast("Cart cleared.", "info");
+        }
+
+        function quickPromo(code) {
+            document.getElementById("promoInput").value = code;
+            applyPromo();
+        }
+
+        function applyPromo() {
+            const code = document.getElementById("promoInput").value.trim().toUpperCase();
+            if (!code) {
+                setAppliedPromo("");
+                renderCartPage();
+                return;
+            }
+            const rule = PROMO_CODES[code];
+            if (!rule) {
+                showToast("Invalid promo code. Try EZY20 or WELCOME10.", "error");
+                return;
+            }
+            const cart = getCart();
+            const subtotal = cart.reduce((s, item) => {
+                const p = getProductById(item.id);
+                return s + (p ? p.price * item.qty : 0);
+            }, 0);
+            if (rule.minSubtotal && subtotal < rule.minSubtotal) {
+                showToast(`Minimum cart value of ${formatINR(rule.minSubtotal)} required for ${code}.`, "error");
+                return;
+            }
+            setAppliedPromo(code);
+            showToast(`Promo "${code}" applied!`, "success");
+            renderCartPage();
+        }
+
+        renderCartPage();
+    </script>
+</body>
+</html>

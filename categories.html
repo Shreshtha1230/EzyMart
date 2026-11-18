@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EzyMart Pro | Explore Categories</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .cat-showcase-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            margin-top: 20px;
+        }
+        .cat-big-card {
+            border-radius: 24px;
+            overflow: hidden;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-3d);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+        .cat-big-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--border-strong);
+            box-shadow: var(--shadow-glow);
+        }
+        .cat-banner {
+            height: 190px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cat-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .cat-big-card:hover .cat-banner img { transform: scale(1.07); }
+        .cat-banner-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(8,8,16,0.92), rgba(8,8,16,0.18));
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            padding: 18px 22px;
+        }
+        .cat-body {
+            padding: 20px 22px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar-root"></div>
+
+    <section class="page-hero">
+        <div class="container">
+            <span class="section-tag"><i class="fa-solid fa-layer-group"></i> CURATED DEPARTMENTS</span>
+            <h1>Explore Every <span>Category</span></h1>
+            <p>Jump straight into the collection you want. Every category dynamically filters our live product catalog.</p>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="cat-showcase-grid" id="catShowcaseGrid"></div>
+    </main>
+
+    <div id="footer-root"></div>
+
+    <script src="app.js"></script>
+    <script>
+        renderSharedLayout("categories");
+
+        const departments = [
+            {
+                name: "Electronics",
+                tagline: "ANC Headphones, Earbuds & 4K Action Cameras",
+                icon: "fa-microchip",
+                img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=700&q=80"
+            },
+            {
+                name: "Gaming",
+                tagline: "RGB Mechanical Keyboards, Pro Mice & Studio Mics",
+                icon: "fa-gamepad",
+                img: "https://images.unsplash.com/photo-1595225476474-87563907a212?auto=format&fit=crop&w=700&q=80"
+            },
+            {
+                name: "Footwear",
+                tagline: "Streetwear Sneakers & Cushioned Running Shoes",
+                icon: "fa-shoe-prints",
+                img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=700&q=80"
+            },
+            {
+                name: "Accessories",
+                tagline: "AMOLED Smartwatches, Chrono Steel & Polarized Shades",
+                icon: "fa-clock",
+                img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=700&q=80"
+            },
+            {
+                name: "Fashion",
+                tagline: "Heavyweight Street Hoodies & Essential Denim",
+                icon: "fa-shirt",
+                img: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=700&q=80"
+            },
+            {
+                name: "Bags",
+                tagline: "Anti-Theft Tech Backpacks & Leather Messengers",
+                icon: "fa-briefcase",
+                img: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=700&q=80"
+            }
+        ];
+
+        document.getElementById("catShowcaseGrid").innerHTML = departments.map(d => {
+            const items = PRODUCTS.filter(p => p.category === d.name);
+            const minPrice = Math.min(...items.map(p => p.price));
+            return `
+                <article class="cat-big-card">
+                    <div class="cat-banner">
+                        <img src="${d.img}" alt="${d.name}" onerror="this.style.display='none';">
+                        <div class="cat-banner-overlay">
+                            <span style="padding:6px 12px;border-radius:999px;background:rgba(115,87,255,0.85);color:#fff;font-size:12px;font-weight:700;">
+                                <i class="fa-solid ${d.icon}"></i> ${items.length} Items
+                            </span>
+                            <span style="font-size:13px;font-weight:700;color:#fff;">From ${formatINR(minPrice)}</span>
+                        </div>
+                    </div>
+                    <div class="cat-body">
+                        <h2 style="font-size:22px;font-weight:900;">${d.name}</h2>
+                        <p style="color:var(--text-muted);font-size:14px;">${d.tagline}</p>
+                        <a href="product.html?category=${encodeURIComponent(d.name)}" class="btn btn-primary" style="margin-top:auto;">
+                            Explore ${d.name} <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </article>
+            `;
+        }).join("");
+    </script>
+</body>
+</html>

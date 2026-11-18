@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EzyMart Pro | Next-Gen E-Commerce Experience</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .trust-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin: 18px 0 80px;
+        }
+        .trust-item {
+            padding: 20px;
+            border-radius: 18px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: var(--shadow-3d);
+        }
+        .trust-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 13px;
+            background: rgba(115, 87, 255, 0.16);
+            color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .home-cat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 18px;
+            margin-bottom: 84px;
+        }
+        .cat-tile {
+            padding: 26px 20px;
+            border-radius: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            text-align: center;
+            box-shadow: var(--shadow-3d);
+            transition: var(--transition);
+            display: block;
+        }
+        .cat-tile:hover {
+            transform: translateY(-7px);
+            border-color: var(--border-strong);
+            box-shadow: var(--shadow-glow);
+        }
+        .cat-tile-icon {
+            width: 58px;
+            height: 58px;
+            margin: 0 auto 14px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+        .cat-tile h3 { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+        .cat-tile span { font-size: 12.5px; color: var(--text-muted); }
+
+        .newsletter-box {
+            margin-top: 84px;
+            padding: 46px 32px;
+            text-align: center;
+            border-radius: 26px;
+            background: var(--surface);
+            border: 1px solid var(--border-strong);
+            box-shadow: var(--shadow-3d);
+        }
+        .newsletter-form {
+            display: flex;
+            gap: 10px;
+            max-width: 480px;
+            margin: 22px auto 0;
+            flex-wrap: wrap;
+        }
+        .newsletter-form input { flex: 1; min-width: 220px; }
+    </style>
+</head>
+<body>
+    <div id="navbar-root"></div>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div>
+                    <div class="hero-pill">
+                        <span class="pulse"></span>
+                        SEASON 2K26 DROP • FLAT 20% OFF WITH CODE "EZY20"
+                    </div>
+                    <h1>Your World.<br><span>Shop Smarter.</span></h1>
+                    <p class="hero-desc">
+                        Explore flagship electronics, streetwear, gaming gear, and everyday essentials with instant search, live order tracking, and our one-click EzyPay Checkout.
+                    </p>
+                    <div class="hero-cta">
+                        <a href="product.html" class="btn btn-primary">
+                            <i class="fa-solid fa-bolt"></i> Explore Store
+                        </a>
+                        <a href="categories.html" class="btn btn-secondary">
+                            <i class="fa-solid fa-layer-group"></i> Browse Categories
+                        </a>
+                        <button class="btn btn-secondary" onclick="openSearchModal()">
+                            <i class="fa-solid fa-magnifying-glass"></i> Quick Search (Ctrl+K)
+                        </button>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat-box">
+                            <strong>16+</strong>
+                            <span>Curated Products</span>
+                        </div>
+                        <div class="stat-box">
+                            <strong>4.8 ★</strong>
+                            <span>Customer Rating</span>
+                        </div>
+                        <div class="stat-box">
+                            <strong>100%</strong>
+                            <span>Secure EzyPay</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3D FEATURED SHOWCASE -->
+                <div class="hero-visual">
+                    <div class="showcase-card">
+                        <div class="floating-chip top-right">
+                            <i class="fa-solid fa-fire" style="color:#f59e0b;"></i>
+                            Trending #1
+                        </div>
+                        <div class="showcase-img-wrap">
+                            <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=700&q=80"
+                                 alt="AeroPulse ANC Headphones"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <i class="fa-solid fa-headphones product-fallback-icon"></i>
+                            <div class="floating-chip bottom-left">
+                                <i class="fa-solid fa-shield-halved" style="color:var(--success);"></i>
+                                2-Year Warranty
+                            </div>
+                        </div>
+                        <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;">
+                            <div>
+                                <div style="font-size:12px;color:var(--primary-light);font-weight:700;">FEATURED LAUNCH</div>
+                                <h3 style="font-size:20px;font-weight:900;">AeroPulse ANC Headphones</h3>
+                                <div style="font-size:18px;font-weight:800;margin-top:4px;">₹2,499 <span class="price-old" style="font-size:13px;">₹3,999</span></div>
+                            </div>
+                            <button class="btn btn-primary" onclick="addToCart(1)">
+                                <i class="fa-solid fa-cart-plus"></i> Add Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="container">
+        <!-- TRUST STRIP -->
+        <section class="trust-strip">
+            <div class="trust-item">
+                <div class="trust-icon"><i class="fa-solid fa-truck-fast"></i></div>
+                <div>
+                    <strong style="display:block;font-size:14.5px;">Free Express Delivery</strong>
+                    <span style="font-size:12.5px;color:var(--text-muted);">On orders above ₹1,499</span>
+                </div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon"><i class="fa-solid fa-credit-card"></i></div>
+                <div>
+                    <strong style="display:block;font-size:14.5px;">EzyPay Gateway</strong>
+                    <span style="font-size:12.5px;color:var(--text-muted);">UPI, 3D Card, NetBanking & COD</span>
+                </div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon"><i class="fa-solid fa-rotate-left"></i></div>
+                <div>
+                    <strong style="display:block;font-size:14.5px;">7-Day Easy Returns</strong>
+                    <span style="font-size:12.5px;color:var(--text-muted);">No-questions replacement</span>
+                </div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon"><i class="fa-solid fa-file-invoice"></i></div>
+                <div>
+                    <strong style="display:block;font-size:14.5px;">Instant GST Invoice</strong>
+                    <span style="font-size:12.5px;color:var(--text-muted);">Printable receipt & tracking</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- CATEGORIES PREVIEW -->
+        <section id="categories">
+            <div class="section-header">
+                <div>
+                    <div class="section-tag"><i class="fa-solid fa-grid-2"></i> COLLECTIONS</div>
+                    <h2 class="section-title">Shop By <span>Category</span></h2>
+                </div>
+                <a href="categories.html" class="btn btn-secondary btn-sm">View All Categories <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            <div class="home-cat-grid" id="homeCatGrid"></div>
+        </section>
+
+        <!-- TRENDING PRODUCTS -->
+        <section style="margin-bottom:84px;">
+            <div class="section-header">
+                <div>
+                    <div class="section-tag"><i class="fa-solid fa-fire"></i> TOP PICKS</div>
+                    <h2 class="section-title">Trending <span>Products</span></h2>
+                </div>
+                <a href="product.html" class="btn btn-secondary btn-sm">View All 16 Products <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+            <div class="products-grid" id="trendingGrid"></div>
+        </section>
+
+        <!-- FLASH SALE COUNTDOWN -->
+        <section id="offers" class="flash-banner">
+            <div style="max-width:520px;">
+                <span class="section-tag"><i class="fa-solid fa-bolt"></i> LIMITED TIME FLASH SALE</span>
+                <h2 style="font-size:clamp(26px,3.8vw,38px);font-weight:900;margin-bottom:10px;">
+                    Use Code <span style="color:var(--cyan);">EZY20</span> for Instant 20% Off
+                </h2>
+                <p style="color:var(--text-muted);font-size:14.5px;margin-bottom:20px;">
+                    Apply at Cart or Checkout to unlock instant discounts on all electronics, sneakers, and gaming accessories.
+                </p>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                    <a href="product.html" class="btn btn-primary"><i class="fa-solid fa-bag-shopping"></i> Shop Sale Now</a>
+                    <button class="btn btn-secondary" onclick="copyPromoCode('EZY20')"><i class="fa-regular fa-copy"></i> Copy Code</button>
+                </div>
+            </div>
+            <div class="countdown-boxes">
+                <div class="cd-box"><strong id="cdHours">08</strong><span>Hours</span></div>
+                <div class="cd-box"><strong id="cdMins">42</strong><span>Mins</span></div>
+                <div class="cd-box"><strong id="cdSecs">19</strong><span>Secs</span></div>
+            </div>
+        </section>
+
+        <!-- NEWSLETTER -->
+        <section class="newsletter-box">
+            <span class="section-tag"><i class="fa-regular fa-envelope"></i> STAY UPDATED</span>
+            <h2 class="section-title" style="margin-bottom:10px;">Get Exclusive <span>Drop Alerts</span></h2>
+            <p style="color:var(--text-muted);max-width:500px;margin:0 auto;font-size:14.5px;">
+                Join 25,000+ smart shoppers getting early access to flash deals and student discounts.
+            </p>
+            <form class="newsletter-form" onsubmit="handleNewsletter(event)">
+                <input id="newsEmail" type="text" class="input-field" placeholder="Enter your email address">
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Subscribe</button>
+            </form>
+        </section>
+    </main>
+
+    <div id="footer-root"></div>
+
+    <script src="app.js"></script>
+    <script>
+        renderSharedLayout("home");
+
+        // Render Category Tiles
+        const catMeta = [
+            { name: "Electronics", icon: "fa-microchip" },
+            { name: "Footwear", icon: "fa-shoe-prints" },
+            { name: "Gaming", icon: "fa-gamepad" },
+            { name: "Accessories", icon: "fa-clock" },
+            { name: "Fashion", icon: "fa-shirt" },
+            { name: "Bags", icon: "fa-briefcase" }
+        ];
+        document.getElementById("homeCatGrid").innerHTML = catMeta.map(c => {
+            const count = PRODUCTS.filter(p => p.category === c.name).length;
+            return `
+                <a class="cat-tile" href="product.html?category=${encodeURIComponent(c.name)}">
+                    <div class="cat-tile-icon"><i class="fa-solid ${c.icon}"></i></div>
+                    <h3>${c.name}</h3>
+                    <span>${count} Products</span>
+                </a>
+            `;
+        }).join("");
+
+        // Render Trending Products (first 8)
+        document.getElementById("trendingGrid").innerHTML = PRODUCTS.slice(0, 8).map(renderProductCard).join("");
+
+        // Live Countdown Timer
+        let totalSeconds = 8 * 3600 + 42 * 60 + 19;
+        setInterval(() => {
+            if (totalSeconds > 0) totalSeconds--;
+            const h = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
+            const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
+            const s = String(totalSeconds % 60).padStart(2, "0");
+            document.getElementById("cdHours").textContent = h;
+            document.getElementById("cdMins").textContent = m;
+            document.getElementById("cdSecs").textContent = s;
+        }, 1000);
+
+        function copyPromoCode(code) {
+            if (navigator.clipboard) navigator.clipboard.writeText(code);
+            showToast(`Promo code "${code}" copied! Apply it in your Cart.`, "success");
+        }
+
+        function handleNewsletter(e) {
+            e.preventDefault();
+            const email = document.getElementById("newsEmail").value;
+            if (!isValidEmailSimple(email)) {
+                showToast("Please enter a valid email address.", "error");
+                return;
+            }
+            document.getElementById("newsEmail").value = "";
+            showToast("Subscribed! Welcome to EzyMart VIP drops.", "success");
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EzyMart Pro | Shop All Products</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .shop-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 28px;
+            align-items: start;
+        }
+        .filter-panel {
+            padding: 24px;
+            position: sticky;
+            top: 102px;
+        }
+        .filter-group {
+            margin-bottom: 22px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--border);
+        }
+        .filter-group:last-of-type { border-bottom: none; margin-bottom: 10px; }
+        .filter-title {
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.4px;
+            color: var(--primary-light);
+            margin-bottom: 12px;
+        }
+        .cat-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .cat-pill {
+            padding: 7px 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--glass);
+            color: var(--text-muted);
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .cat-pill.active, .cat-pill:hover {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #fff;
+            border-color: transparent;
+        }
+        .shop-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+        }
+        .range-slider {
+            width: 100%;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+        @media (max-width: 920px) {
+            .shop-layout { grid-template-columns: 1fr; }
+            .filter-panel { position: static; }
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar-root"></div>
+
+    <section class="page-hero">
+        <div class="container">
+            <span class="section-tag"><i class="fa-solid fa-store"></i> EZYMART STOREFRONT</span>
+            <h1>Explore All <span>Products</span></h1>
+            <p>Filter by category, budget, rating, and availability. Click any product for Quick View & variant selection.</p>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="shop-layout">
+            <!-- SIDEBAR FILTERS -->
+            <aside class="glass-card filter-panel">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+                    <h3 style="font-size:17px;font-weight:800;"><i class="fa-solid fa-sliders"></i> Filters</h3>
+                    <button class="btn btn-secondary btn-sm" onclick="resetFilters()">Reset</button>
+                </div>
+
+                <div class="filter-group">
+                    <div class="filter-title">Search</div>
+                    <input type="text" id="filterSearch" class="input-field" placeholder="Search products..." oninput="applyFilters()">
+                </div>
+
+                <div class="filter-group">
+                    <div class="filter-title">Category</div>
+                    <div class="cat-pills" id="categoryPills"></div>
+                </div>
+
+                <div class="filter-group">
+                    <div class="filter-title" style="display:flex;justify-content:space-between;">
+                        <span>Max Price</span>
+                        <span id="priceLabel" style="color:var(--text);">₹6,000</span>
+                    </div>
+                    <input type="range" id="priceRange" class="range-slider" min="500" max="6000" step="100" value="6000" oninput="applyFilters()">
+                </div>
+
+                <div class="filter-group">
+                    <div class="filter-title">Minimum Rating</div>
+                    <select id="ratingFilter" class="select-field" onchange="applyFilters()">
+                        <option value="0">All Ratings</option>
+                        <option value="4.5">4.5 ★ & Above</option>
+                        <option value="4.7">4.7 ★ & Above</option>
+                        <option value="4.8">4.8 ★ & Above</option>
+                    </select>
+                </div>
+
+                <label style="display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:600;cursor:pointer;">
+                    <input type="checkbox" id="stockOnly" onchange="applyFilters()" style="width:16px;height:16px;accent-color:var(--primary);">
+                    Show In-Stock Only
+                </label>
+            </aside>
+
+            <!-- CATALOG GRID -->
+            <section>
+                <div class="shop-toolbar glass-card" style="padding:14px 20px;border-radius:16px;">
+                    <div id="resultCount" style="font-size:14px;font-weight:700;">Showing 16 Products</div>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <span style="font-size:13px;color:var(--text-muted);">Sort by:</span>
+                        <select id="sortSelect" class="select-field" style="width:auto;padding:8px 12px;" onchange="applyFilters()">
+                            <option value="featured">Featured</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="rating-desc">Highest Rated</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="products-grid" id="catalogGrid"></div>
+            </section>
+        </div>
+    </main>
+
+    <div id="footer-root"></div>
+
+    <script src="app.js"></script>
+    <script>
+        renderSharedLayout("products");
+
+        const categories = ["All", "Electronics", "Footwear", "Gaming", "Accessories", "Fashion", "Bags"];
+        let selectedCategory = "All";
+
+        // Read URL query ?category=...
+        const params = new URLSearchParams(window.location.search);
+        const urlCat = params.get("category");
+        if (urlCat && categories.includes(urlCat)) {
+            selectedCategory = urlCat;
+        }
+
+        function renderCategoryPills() {
+            document.getElementById("categoryPills").innerHTML = categories.map(cat => `
+                <button class="cat-pill ${selectedCategory === cat ? "active" : ""}" onclick="selectCategory('${cat}')">${cat}</button>
+            `).join("");
+        }
+
+        function selectCategory(cat) {
+            selectedCategory = cat;
+            renderCategoryPills();
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const q = document.getElementById("filterSearch").value.trim().toLowerCase();
+            const maxPrice = Number(document.getElementById("priceRange").value);
+            const minRating = Number(document.getElementById("ratingFilter").value);
+            const stockOnly = document.getElementById("stockOnly").checked;
+            const sortVal = document.getElementById("sortSelect").value;
+
+            document.getElementById("priceLabel").textContent = formatINR(maxPrice);
+
+            let list = PRODUCTS.filter(p => {
+                if (selectedCategory !== "All" && p.category !== selectedCategory) return false;
+                if (q && !p.name.toLowerCase().includes(q) && !p.category.toLowerCase().includes(q)) return false;
+                if (p.price > maxPrice) return false;
+                if (p.rating < minRating) return false;
+                if (stockOnly && !p.stock) return false;
+                return true;
+            });
+
+            if (sortVal === "price-asc") list.sort((a, b) => a.price - b.price);
+            if (sortVal === "price-desc") list.sort((a, b) => b.price - a.price);
+            if (sortVal === "rating-desc") list.sort((a, b) => b.rating - a.rating);
+
+            document.getElementById("resultCount").textContent = `Showing ${list.length} Product${list.length === 1 ? "" : "s"}`;
+
+            const grid = document.getElementById("catalogGrid");
+            if (list.length === 0) {
+                grid.innerHTML = `
+                    <div class="glass-card" style="grid-column:1/-1;text-align:center;padding:54px 24px;">
+                        <i class="fa-solid fa-box-open" style="font-size:44px;color:var(--primary-light);margin-bottom:14px;"></i>
+                        <h3 style="font-size:20px;font-weight:800;margin-bottom:6px;">No matching products found</h3>
+                        <p style="color:var(--text-muted);margin-bottom:18px;">Try clearing your search or raising the maximum price slider.</p>
+                        <button class="btn btn-primary" onclick="resetFilters()">Reset All Filters</button>
+                    </div>
+                `;
+            } else {
+                grid.innerHTML = list.map(renderProductCard).join("");
+            }
+        }
+
+        function resetFilters() {
+            selectedCategory = "All";
+            document.getElementById("filterSearch").value = "";
+            document.getElementById("priceRange").value = 6000;
+            document.getElementById("ratingFilter").value = "0";
+            document.getElementById("stockOnly").checked = false;
+            document.getElementById("sortSelect").value = "featured";
+            renderCategoryPills();
+            applyFilters();
+        }
+
+        renderCategoryPills();
+        applyFilters();
+    </script>
+</body>
+</html>

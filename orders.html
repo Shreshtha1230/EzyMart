@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EzyMart Pro | My Orders & Live Tracking</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .order-card {
+            padding: 26px;
+            margin-bottom: 22px;
+        }
+        .order-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 22px;
+        }
+        .tracker {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 24px;
+            position: relative;
+        }
+        .track-step {
+            text-align: center;
+            padding: 14px 8px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--glass);
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+        .track-step i {
+            display: block;
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+        .track-step.done {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.14);
+            color: var(--text);
+        }
+        .track-step.done i { color: var(--success); }
+        @media (max-width: 640px) {
+            .tracker { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar-root"></div>
+
+    <section class="page-hero">
+        <div class="container">
+            <span class="section-tag"><i class="fa-solid fa-truck-fast"></i> LIVE ORDER TRACKING</span>
+            <h1>My <span>Orders</span></h1>
+            <p>Track every order placed through EzyPay Checkout in real time, simulate delivery updates, and print GST invoices.</p>
+        </div>
+    </section>
+
+    <main class="container" id="ordersRoot"></main>
+
+    <div id="footer-root"></div>
+
+    <script src="app.js"></script>
+    <script>
+        renderSharedLayout("orders");
+
+        const STAGES = [
+            { step: 1, label: "Order Confirmed", icon: "fa-circle-check" },
+            { step: 2, label: "Packed at Hub", icon: "fa-box" },
+            { step: 3, label: "Out for Delivery", icon: "fa-truck-fast" },
+            { step: 4, label: "Delivered", icon: "fa-house-circle-check" }
+        ];
+
+        function renderOrders() {
+            const orders = getOrders();
+            const root = document.getElementById("ordersRoot");
+
+            if (orders.length === 0) {
+                root.innerHTML = `
+                    <div class="glass-card" style="text-align:center;padding:64px 24px;max-width:600px;margin:0 auto;">
+                        <i class="fa-solid fa-box-open" style="font-size:50px;color:var(--primary-light);margin-bottom:16px;"></i>
+                        <h2 style="font-size:24px;font-weight:900;margin-bottom:8px;">No Orders Placed Yet</h2>
+                        <p style="color:var(--text-muted);margin-bottom:22px;">Complete a quick checkout via EzyPay to see live order tracking and your GST invoice here!</p>
+                        <a href="cart.html" class="btn btn-primary"><i class="fa-solid fa-cart-shopping"></i> Go to Cart</a>
+                    </div>
+                `;
+                return;
+            }
+
+            root.innerHTML = orders.map((o, idx) => `
+                <article class="glass-card order-card">
+                    <div class="order-top">
+                        <div>
+                            <div style="font-size:18px;font-weight:900;">${o.orderId}</div>
+                            <div style="font-size:12.5px;color:var(--text-muted);">Placed on ${o.date} • Paid via <strong>${o.paymentLabel}</strong></div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                            <span style="font-size:20px;font-weight:900;color:var(--primary-light);">${formatINR(o.pricing.grandTotal)}</span>
+                            ${o.statusStep < 4 ? `
+                                <button class="btn btn-secondary btn-sm" onclick="advanceOrder(${idx})">
+                                    <i class="fa-solid fa-forward-step"></i> Simulate Next Stage
+                                </button>
+                            ` : `
+                                <span style="padding:6px 12px;border-radius:999px;background:rgba(16,185,129,0.16);color:var(--success);font-size:12px;font-weight:800;">
+                                    <i class="fa-solid fa-check"></i> Delivered
+                                </span>
+                            `}
+                        </div>
+                    </div>
+
+                    <div class="tracker">
+                        ${STAGES.map(s => `
+                            <div class="track-step ${o.statusStep >= s.step ? 'done' : ''}">
+                                <i class="fa-solid ${s.icon}"></i>
+                                ${s.label}
+                            </div>
+                        `).join("")}
+                    </div>
+
+                    <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:14px;">
+                        <div style="font-size:13.5px;color:var(--text-muted);">
+                            <strong style="color:var(--text);display:block;margin-bottom:4px;">Items (${o.items.length}):</strong>
+                            ${o.items.map(i => `${i.name} (${i.variant}) × ${i.qty}`).join(" • ")}
+                            <div style="margin-top:6px;">Ship to: ${o.customer.name}, ${o.customer.city}, ${o.customer.state} - ${o.customer.pin}</div>
+                        </div>
+                        <button class="btn btn-primary btn-sm" onclick="window.print()">
+                            <i class="fa-solid fa-file-invoice"></i> Print Receipt
+                        </button>
+                    </div>
+                </article>
+            `).join("");
+        }
+
+        function advanceOrder(idx) {
+            const orders = getOrders();
+            if (orders[idx] && orders[idx].statusStep < 4) {
+                orders[idx].statusStep += 1;
+                saveOrders(orders);
+                showToast(`Order ${orders[idx].orderId} updated to: ${STAGES[orders[idx].statusStep - 1].label}`, "success");
+                renderOrders();
+            }
+        }
+
+        renderOrders();
+    </script>
+</body>
+</html>

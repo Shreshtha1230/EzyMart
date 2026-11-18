@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EzyMart Pro | My Wishlist</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="navbar-root"></div>
+
+    <section class="page-hero">
+        <div class="container">
+            <span class="section-tag"><i class="fa-solid fa-heart"></i> SAVED COLLECTION</span>
+            <h1>My <span>Wishlist</span></h1>
+            <p>Your saved favorites are stored automatically. Move them to your cart whenever you are ready to check out.</p>
+        </div>
+    </section>
+
+    <main class="container">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+            <div id="wishSummary" style="font-size:15px;font-weight:700;"></div>
+            <div style="display:flex;gap:10px;">
+                <button class="btn btn-primary btn-sm" onclick="moveAllToCart()"><i class="fa-solid fa-cart-plus"></i> Move All to Cart</button>
+                <button class="btn btn-danger btn-sm" onclick="clearWishlist()"><i class="fa-regular fa-trash-can"></i> Clear All</button>
+            </div>
+        </div>
+        <div class="products-grid" id="wishlistGrid"></div>
+    </main>
+
+    <div id="footer-root"></div>
+
+    <script src="app.js"></script>
+    <script>
+        renderSharedLayout("wishlist");
+
+        function renderWishlistPage() {
+            const ids = getWishlist();
+            const items = ids.map(getProductById).filter(Boolean);
+            document.getElementById("wishSummary").textContent = `${items.length} Saved Item${items.length === 1 ? "" : "s"}`;
+
+            const grid = document.getElementById("wishlistGrid");
+            if (items.length === 0) {
+                grid.innerHTML = `
+                    <div class="glass-card" style="grid-column:1/-1;text-align:center;padding:60px 24px;">
+                        <i class="fa-regular fa-heart" style="font-size:48px;color:var(--accent);margin-bottom:14px;"></i>
+                        <h3 style="font-size:22px;font-weight:800;margin-bottom:8px;">Your Wishlist is Empty</h3>
+                        <p style="color:var(--text-muted);margin-bottom:20px;">Tap the heart icon on any product to save it here.</p>
+                        <a href="product.html" class="btn btn-primary"><i class="fa-solid fa-store"></i> Explore Products</a>
+                    </div>
+                `;
+                return;
+            }
+            grid.innerHTML = items.map(p => `
+                <article class="product-card">
+                    <div class="product-media" onclick="openQuickView(${p.id})">
+                        <span class="product-badge">${p.badge}</span>
+                        <div class="card-quick-actions" onclick="event.stopPropagation()">
+                            <button class="card-icon-btn active" onclick="removeWishItem(${p.id})" title="Remove">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                        <img src="${p.img}" alt="${p.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <i class="fa-solid ${p.icon} product-fallback-icon"></i>
+                    </div>
+                    <div class="product-body">
+                        <div class="product-meta">
+                            <span>${p.category}</span>
+                            <span class="product-rating"><i class="fa-solid fa-star"></i> ${p.rating}</span>
+                        </div>
+                        <h3 class="product-title" onclick="openQuickView(${p.id})">${p.name}</h3>
+                        <div class="product-price-row">
+                            <span class="price-now">${formatINR(p.price)}</span>
+                            <span class="price-old">${formatINR(p.oldPrice)}</span>
+                        </div>
+                        <div class="product-footer">
+                            <button class="btn btn-primary" onclick="moveOneToCart(${p.id})" ${p.stock ? "" : "disabled"}>
+                                <i class="fa-solid fa-cart-plus"></i> ${p.stock ? "Move to Cart" : "Out of Stock"}
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            `).join("");
+        }
+
+        function removeWishItem(id) {
+            toggleWishlist(id);
+            renderWishlistPage();
+        }
+
+        function moveOneToCart(id) {
+            addToCart(id, 1);
+            const list = getWishlist().filter(x => x !== id);
+            saveWishlist(list);
+            renderWishlistPage();
+        }
+
+        function moveAllToCart() {
+            const ids = getWishlist();
+            if (ids.length === 0) return;
+            ids.forEach(id => {
+                const p = getProductById(id);
+                if (p && p.stock) addToCart(id, 1);
+            });
+            saveWishlist([]);
+            renderWishlistPage();
+        }
+
+        function clearWishlist() {
+            saveWishlist([]);
+            renderWishlistPage();
+            showToast("Wishlist cleared.", "info");
+        }
+
+        renderWishlistPage();
+    </script>
+</body>
+</html>
